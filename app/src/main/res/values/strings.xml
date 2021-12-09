@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Assignement003</string>
+    <string name="gps_tracker">GPS Tracker</string>
+    <string name="start_recording">Start recording</string>
+    <string name="stop_recording">Stop recording</string>
+    <string name="record_summary">Record summary</string>
+    <string name="average_speed">Average speed =</string>
+    <string name="total_distance">Total distance =</string>
+    <string name="time_taken">Time taken =</string>
+    <string name="minimum_altitute">Minimum altitute =</string>
+    <string name="maximum_altitude">Maximum altitude =</string>
+    <string name="Returnhome">Return</string>
 </resources>
