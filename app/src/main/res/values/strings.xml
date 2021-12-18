@@ -9,5 +9,7 @@
     <string name="time_taken">Time taken =</string>
     <string name="minimum_altitute">Minimum altitute =</string>
     <string name="maximum_altitude">Maximum altitude =</string>
-    <string name="Returnhome">Return</string>
+    <string name="Return_home">Return</string>
+    <string name="Latitude_info">Latitude = %1$f</string>
+    <string name="Longitude_info">Longitude = %1$f</string>
 </resources>
