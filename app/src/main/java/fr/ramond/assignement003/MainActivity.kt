@@ -30,12 +30,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var locationManager: LocationManager
     private var _latitude : Double = 0.0
     private var _longitude : Double = 0.0
+    private var _altitude : Double = 0.0
     private lateinit var latitudeText : TextView
     private lateinit var longitudeText : TextView
     private lateinit var writer: FileWriter
     private lateinit var currentFile : String
 
-    val df: DateFormat = SimpleDateFormat("yyyy-MM-dd' T 'HH:mm:ssZ")
+    val df: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
 
     private val mInterval: Long = 5000
 
@@ -64,8 +65,10 @@ class MainActivity : AppCompatActivity() {
     fun onClickStart(view: View){
         if(started){
             StartButton.text = getString(R.string.start_recording)
+            val time = (SystemClock.elapsedRealtime() - chrono.base).toFloat()
             val intent = Intent(this, ResultDisplay::class.java)
             intent.putExtra("_file", currentFile)
+            intent.putExtra("_time", time)
             stopped = true
             closeFile()
             startActivity(intent)
@@ -91,8 +94,9 @@ class MainActivity : AppCompatActivity() {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f) { p0 ->
             _latitude = p0.latitude
             _longitude = p0.longitude
+            _altitude = p0.altitude
             if(!stopped){
-                addpoint(_longitude, _latitude)
+                addpoint(_longitude, _latitude, _altitude)
             }
             latitudeText.text = java.lang.String.format(resources.getString(R.string.Latitude_info), _latitude)
             longitudeText.text = java.lang.String.format(resources.getString(R.string.Longitude_info), _longitude)
@@ -141,25 +145,24 @@ class MainActivity : AppCompatActivity() {
                 "http://www.topografix.com/GPX/1/1/gpx.xsd\"><trk>\n"
         val name = "<name>$df</name><trkseg>\n";
 
-        val d = File(android.os.Environment.getExternalStorageDirectory().absolutePath + "/GPStrackss")
+        val d = File(android.os.Environment.getExternalStorageDirectory().absolutePath + "/GPStracks")
         if(!d.isDirectory){
             d.mkdirs()
-            val toast = Toast.makeText(this, "GPStracks created", Toast.LENGTH_LONG)
-            toast.show()
         }
         val now = Date()
-        val f = File(android.os.Environment.getExternalStorageDirectory().absolutePath + "/GPStrackss" + "/" + df.format(now) +".xml")
+        val f = File(android.os.Environment.getExternalStorageDirectory().absolutePath + "/GPStracks" + "/" + df.format(now) +".xml")
         currentFile = df.format(now) + ".xml"
         if(checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
             Toast.makeText(this, (checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED).toString(), Toast.LENGTH_LONG).show()
             writer = FileWriter(f, false)
             writer.append(header)
+            writer.append(name)
         }
     }
 
-    private fun addpoint(longitude : Double, latitude : Double){
+    private fun addpoint(longitude : Double, latitude : Double, altitude : Double){
         val now = Date()
-        val segement = "<trkpt lat=\"" + longitude + "\" lon=\"" + latitude + "\"><time>" + df.format(now) + "</time></trkpt>\n";
+        val segement = "<trkpt lat=\"" + longitude + "\" lon=\"" + latitude + "\"><time>" + df.format(now) + "</time><ele>" + altitude + "</ele></trkpt>\n";
         if(writer != null){
             writer.append(segement)
         }
