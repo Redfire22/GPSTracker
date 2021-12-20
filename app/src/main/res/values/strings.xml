@@ -17,4 +17,5 @@
     <string name="Speed">Average speed = %1$f m/s</string>
     <string name="minAlt">Minimum altitude = %1$d m</string>
     <string name="maxAlt">Maximum altitude = %1$d m</string>
+    <string name="open_file">Open file</string>
 </resources>

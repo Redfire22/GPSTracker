@@ -29,6 +29,14 @@
             android:text="@string/start_recording" />
 
 
+        <Button
+            android:id="@+id/searchFile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="@string/open_file"
+            android:onClick="onClickOpen"/>
+
         <Chronometer
             android:id="@+id/simpleChronometer"
             android:layout_width="match_parent"

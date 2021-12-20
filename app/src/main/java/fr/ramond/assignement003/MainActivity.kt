@@ -83,6 +83,16 @@ class MainActivity : AppCompatActivity() {
             started = true
         }
     }
+
+    fun onClickOpen(view : View){
+        if(!started){
+            val intent = Intent(this, OpenFile::class.java)
+            startActivity(intent)
+        }
+        else{
+            Toast.makeText(this, "App is running, finish the current run to open file", Toast.LENGTH_LONG).show()
+        }
+    }
     //(checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED))
     private fun getLocation(){
         if((checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) &&
@@ -178,30 +188,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initGPXFile(file: File, n: String, lat: Double, long: Double) {
 
-        val header = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" " +
-                "?><gpx xmlns=\"http://www.topografix.com/GPX/1/1\" creator=\"MapSource 6.15.5\" " +
-                "version=\"1.1\" " +
-                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"  " +
-                "xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 " +
-                "http://www.topografix.com/GPX/1/1/gpx.xsd\"><trk>\n"
-        val name = "<name>$n</name><trkseg>\n";
-
-        try {
-
-            val writer = FileWriter(file, false)
-            writer.append(header)
-            writer.append(name)
-        }catch (e: IOException){
-
-        }
-
-
-
-        //val df: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-
-
-    }
 
 }

@@ -145,7 +145,6 @@ class ResultDisplay : AppCompatActivity() {
                 val dist = calculateDistance(track[i], track[i+1])
                 val time = track[i+1].time - track[i].time
                 val vit = (dist / time)*1000
-                Toast.makeText(this, vit.toString(), Toast.LENGTH_SHORT).show()
                 totalVit += vit
                 trackSpeed.add(vit)
                 k++
