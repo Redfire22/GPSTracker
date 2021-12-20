@@ -129,10 +129,12 @@ class graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private fun drawGraphPlot(canvas : Canvas, path : Path, paint : Paint){
         mPath.moveTo(0f, mHeight.toFloat())
 
-        for(i in 0 until nbPoint){
-            mPath.lineTo((i*mXUnit), (mHeight - ((mPoint[i] * mHeight)/10).toFloat()))
+        val scale = maxSpeed()
 
-            canvas.drawCircle((i*mXUnit), mHeight - (mPoint[i] * mYUnit).toFloat(), 5f, paint)
+        for(i in 0 until nbPoint){
+            mPath.lineTo((i*mXUnit), (mHeight - ((mPoint[i] * mHeight)/scale).toFloat()))
+
+            canvas.drawCircle((i*mXUnit), (mHeight - ((mPoint[i] * mHeight)/scale)).toFloat(), 5f, paint)
         }
         canvas.drawPath(mPath, paint)
     }
@@ -155,6 +157,17 @@ class graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
             cy -= mYUnit
         }
     }
+
+    private fun maxSpeed(): Double {
+        var max = 0.0
+        for(i in 0 until mPoint.size){
+            if(mPoint[i] > max){
+                max = mPoint[i]
+            }
+        }
+        return max
+    }
+
 
 
 
