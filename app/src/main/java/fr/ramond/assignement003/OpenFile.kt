@@ -9,18 +9,21 @@ import android.widget.ListView
 import android.widget.Toast
 import java.io.File
 
+//Basic activity, it will display a list of existing gpx file in the directory
 class OpenFile : AppCompatActivity() {
 
-    val fileLocation = Environment.getExternalStorageDirectory().absolutePath + "/GPStracks"
-
+    //Global variable
     private lateinit var list : ListView
 
+    //The only method of this activity, create the listview and fill it with existing file
+    //Also create the Listener, in case the user click on one of the file
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_open_file)
 
+        //The directory
         val directory = File(Environment.getExternalStorageDirectory().absolutePath + "/GPStracks")
-
+        //The list of file in the directory
         val files = directory.listFiles()
 
         list = findViewById(R.id.List)
@@ -34,7 +37,7 @@ class OpenFile : AppCompatActivity() {
         val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, filesName)
 
         list.adapter = adapter
-
+        //Create the listener
         list.setOnItemClickListener { _, _, position, _ ->
             val selectedItem = filesName[position]
 

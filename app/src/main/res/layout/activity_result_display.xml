@@ -73,7 +73,7 @@
                     android:textSize="18sp" />
             </LinearLayout>
 
-            <fr.ramond.assignement003.graph
+            <fr.ramond.assignement003.Graph
                 android:id="@+id/cv_line_graph"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

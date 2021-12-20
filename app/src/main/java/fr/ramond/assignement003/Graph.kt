@@ -12,23 +12,25 @@ import android.view.View
 import java.time.LocalDateTime
 import kotlin.math.min
 
-class graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
+//Custom view, draw the graph
+class Graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
+    //Global variable
     private lateinit var mPaint : Paint
     private var mIsInit = false
     private lateinit var mPath : Path
 
-    private var mOriginX : Float = 0.0f
-    private var mOriginY : Float = 0.0f
     private var mWidth : Int = 0
     private var mHeight : Int = 0
     private var mXUnit : Float = 0.0f
     private var mYUnit : Float = 0.0f
     private lateinit var mBlackPaint : Paint
+    //List of speed, given by the ResultDisplay activity
     lateinit var mPoint : MutableList<Double>
 
     private var nbPoint : Int = 0
 
+    //Initialisation of global variable, some of these value will change again
     private fun init(){
         mPaint = Paint()
         mPath = Path()
@@ -50,6 +52,8 @@ class graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
         mIsInit = true
     }
 
+    //Override the onMeasure method, I need to do this in order to use the custom view in a
+    //Scrolling view
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
          val viewWidth = 350
@@ -82,15 +86,17 @@ class graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
         else{
             height = viewHeight
         }
-
+        //Also update global variable
         mWidth = width
         mHeight = height
 
         setMeasuredDimension(width, height)
     }
 
+    //Starting point of this view, will call all required method
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        //Make sure we don't launch init twice
         if(!mIsInit){
             init()
         }
@@ -104,6 +110,7 @@ class graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
         nbPoint = mPoint.size
 
+        //Update global variable from the last received speed list
         if(nbPoint == 0) {
             mXUnit = mWidth.toFloat()
 
@@ -115,17 +122,24 @@ class graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
             mYUnit = (mHeight / nbPoint).toFloat()
         }
 
+        //3 step
+        //Draw the axis
         drawAxis(canvas, mBlackPaint)
 
+        //Draw the speed line itself
         drawGraphPlot(canvas, mPath, mPaint)
+
+        //Draw the background line
         drawGraphBackground(canvas, mBlackPaint)
     }
 
+    //Very basic method that simply draw 2 lines
     private fun drawAxis(canvas : Canvas, paint : Paint) {
         canvas.drawLine(0f, mHeight.toFloat(), 0f, 0f, paint) // y axis
         canvas.drawLine(0f, mHeight.toFloat(), mWidth.toFloat() , mHeight.toFloat(), paint) // x axis
     }
 
+    //Draw the speed line. This scale with the maximum value of speed in the graph.
     private fun drawGraphPlot(canvas : Canvas, path : Path, paint : Paint){
         mPath.moveTo(0f, mHeight.toFloat())
 
@@ -139,6 +153,7 @@ class graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
         canvas.drawPath(mPath, paint)
     }
 
+    //Draw the background line, again, it just draw line one after the other
     private fun drawGraphBackground(canvas : Canvas, paintBlack : Paint) {
         var cx = mXUnit
         var cy = mHeight - mYUnit
@@ -158,6 +173,8 @@ class graph(context: Context, attrs: AttributeSet) : View(context, attrs) {
         }
     }
 
+    //Method used in drawing the speed line, used to scale the graphic depending on the max
+    //speed
     private fun maxSpeed(): Double {
         var max = 0.0
         for(i in 0 until mPoint.size){
