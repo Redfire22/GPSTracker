@@ -13,8 +13,8 @@
     <string name="Latitude_info">Latitude = %1$f</string>
     <string name="Longitude_info">Longitude = %1$f</string>
     <string name="Time_taken">Time taken = %1$f seconds</string>
-    <string name="Distance">Total distance = %1$f km</string>
+    <string name="Distance">Total distance = %1$f m</string>
     <string name="Speed">Average speed = %1$f m/s</string>
-    <string name="minAlt">Minimum altitude = %1$f m</string>
-    <string name="maxAlt">Maximum altitude = %1$f m</string>
+    <string name="minAlt">Minimum altitude = %1$d m</string>
+    <string name="maxAlt">Maximum altitude = %1$d m</string>
 </resources>

@@ -7,24 +7,17 @@ import android.content.pm.PackageManager
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.DropBoxManager
 import android.os.Environment
-import android.util.Xml
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import org.xmlpull.v1.XmlPullParser
-import org.xmlpull.v1.XmlPullParserFactory
 import java.io.File
 import java.io.FileInputStream
-import java.io.InputStream
-import java.text.DateFormat
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.math.*
 
@@ -37,6 +30,8 @@ class ResultDisplay : AppCompatActivity() {
     private lateinit var timeTaken : TextView
     private lateinit var minimumAlt : TextView
     private lateinit var maximumAlt : TextView
+    private lateinit var Graph : graph
+    private val trackSpeed : MutableList<Double> = mutableListOf<Double>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +44,7 @@ class ResultDisplay : AppCompatActivity() {
         timeTaken = findViewById(R.id.Timetaken)
         minimumAlt = findViewById(R.id.MinimumAlt)
         maximumAlt = findViewById(R.id.MaximumAlt)
-
+        Graph = findViewById(R.id.cv_line_graph)
         currentFile = intent.getStringExtra("_file")!!
         val time = intent.getFloatExtra("_time", 0.0F)
 
@@ -60,10 +55,12 @@ class ResultDisplay : AppCompatActivity() {
         val track = readFile(file)
 
         val distance = processDistance(track)
+        //val distanceFormat = BigDecimal(distance).setScale(3, RoundingMode.HALF_EVEN)
 
         totalDistance.text = java.lang.String.format(resources.getString(R.string.Distance), distance)
 
         val aveSpeed = processSpeed(track)
+        //val aveSpeedFormat = BigDecimal(aveSpeed).setScale(3, RoundingMode.HALF_EVEN)
 
         averageSpeed.text = java.lang.String.format(resources.getString(R.string.Speed), aveSpeed)
 
@@ -73,10 +70,10 @@ class ResultDisplay : AppCompatActivity() {
         minimumAlt.text = java.lang.String.format(resources.getString(R.string.minAlt), min)
         maximumAlt.text = java.lang.String.format(resources.getString(R.string.maxAlt), max)
 
-
+        Graph.mPoint = trackSpeed
     }
 
-    fun onClickReturn(view : View){
+    fun onClickReturn(view : View) {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
@@ -92,7 +89,7 @@ class ResultDisplay : AppCompatActivity() {
         val root = dom.documentElement
         val items = root.getElementsByTagName("trkpt")
 
-        val df: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
 
         val track : MutableList<Location> = mutableListOf<Location>()
 
@@ -129,7 +126,7 @@ class ResultDisplay : AppCompatActivity() {
 
     private fun processDistance(track : MutableList<Location>) : Double{
 
-        var totalDistance : Double = 0.0
+        var totalDistance = 0.0
         if(track.size > 2){
             for(i in 0 until track.size-1){
                 totalDistance += calculateDistance(track[i], track[i+1])
@@ -147,16 +144,19 @@ class ResultDisplay : AppCompatActivity() {
             for(i in 0 until track.size - 1){
                 val dist = calculateDistance(track[i], track[i+1])
                 val time = track[i+1].time - track[i].time
-                val vit = dist / time
+                val vit = (dist / time)*1000
+                Toast.makeText(this, vit.toString(), Toast.LENGTH_SHORT).show()
                 totalVit += vit
+                trackSpeed.add(vit)
                 k++
             }
         }
         else{
             //Avoid dividing by 0
+                totalVit = -1.0
             k = 1
         }
-        return ((totalVit/k)/3.6)
+        return (totalVit/k)
     }
 
     private fun calculateDistance(p1 : Location, p2 : Location) : Double{
@@ -179,11 +179,11 @@ class ResultDisplay : AppCompatActivity() {
 
         val r = 6371
 
-        return (c*r)
+        return (c*r) * 1000
     }
 
     private fun minAlt(track: MutableList<Location>): Int {
-        var min = 0
+        var min = maxAlt(track)
         for(i in 0 until track.size){
             if(track[i].altitude < 0){
                 min = track[i].altitude.toInt()
@@ -201,6 +201,4 @@ class ResultDisplay : AppCompatActivity() {
         }
         return max
     }
-
-
 }
